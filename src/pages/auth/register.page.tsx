@@ -1,5 +1,4 @@
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
   Card,
@@ -9,13 +8,43 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { useForm } from "react-hook-form";
 import { Checkbox } from "@/components/ui/checkbox";
+import * as Yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
+import {
+  InputLabel,
+  InputType,
+  TextInputField,
+} from "@/components/form/input-form.component";
 
 export default function RegisterPage() {
+  const registerDTO = Yup.object({
+    name: Yup.string().min(2).max(50).required(),
+    email: Yup.string().email().required(),
+    password: Yup.string()
+      .matches(
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%&*_-])[a-zA-Z\d!@#$%&*_-]{8,15}$/
+      )
+      .required(),
+    confirmPassword: Yup.string()
+      .equals([Yup.ref("password")])
+      .required(),
+  });
+
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    resolver: yupResolver(registerDTO),
+  });
+
+  const submitForm = async (data: any) => {};
   return (
     <div className="min-h-screen bg-black text-white flex flex-col">
-      {/* Main Content */}
-      <main className="flex-grow">
+      {/* form Content */}
+      <form className="flex-grow" onSubmit={handleSubmit(submitForm)}>
         <div className="flex items-center justify-center py-16 px-4">
           <Card className="w-full max-w-md bg-gray-900 border-gray-800">
             <CardHeader className="space-y-1">
@@ -29,48 +58,55 @@ export default function RegisterPage() {
             <CardContent className="space-y-4">
               <div className="gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="name" className="text-white">
-                    Name
-                  </Label>
-                  <Input
-                    id="firstName"
-                    placeholder="John"
-                    className="bg-gray-800 border-gray-700 text-white"
-                  />
+                  <div className="flex items-center justify-between">
+                    <InputLabel htmlFor="name">Full Name</InputLabel>
+                  </div>
+                  <TextInputField
+                    name="fullName"
+                    type={InputType.TEXT}
+                    placeholder="John Doe"
+                    control={control}
+                    errMsg={errors?.name?.message as string}
+                  ></TextInputField>
                 </div>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="email" className="text-white">
-                  Email
-                </Label>
-                <Input
-                  id="email"
-                  type="email"
+                <div className="flex items-center justify-between">
+                  <InputLabel htmlFor="email">Email</InputLabel>
+                </div>
+                <TextInputField
+                  name="email"
+                  type={InputType.TEXT}
                   placeholder="your.email@example.com"
-                  className="bg-gray-800 border-gray-700 text-white"
-                />
+                  control={control}
+                  errMsg={errors?.email?.message as string}
+                ></TextInputField>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="password" className="text-white">
-                  Password
-                </Label>
-                <Input
-                  id="password"
-                  type="password"
+                <div className="flex items-center justify-between">
+                  <InputLabel htmlFor="password">Password</InputLabel>
+                </div>
+                <TextInputField
+                  name="password"
+                  type={InputType.PASSWORD}
                   placeholder="••••••••"
-                  className="bg-gray-800 border-gray-700 text-white"
-                />
+                  control={control}
+                  errMsg={errors?.password?.message as string}
+                ></TextInputField>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="confirmPassword" className="text-white">
-                  Confirm Password
-                </Label>
-                <Input
-                  id="confirmPassword"
-                  type="password"
+                <div className="flex items-center justify-between">
+                  <InputLabel htmlFor="confirmPassword">
+                    Confirm Password
+                  </InputLabel>
+                </div>
+                <TextInputField
+                  name="confirmPassword"
+                  type={InputType.PASSWORD}
                   placeholder="••••••••"
-                  className="bg-gray-800 border-gray-700 text-white"
-                />
+                  control={control}
+                  errMsg={errors?.confirmPassword?.message as string}
+                ></TextInputField>
               </div>
               <div className="flex items-center space-x-2">
                 <Checkbox id="terms" />
@@ -87,7 +123,7 @@ export default function RegisterPage() {
               </div>
             </CardContent>
             <CardFooter className="flex flex-col space-y-4">
-              <Button className="w-full bg-purple-600 hover:bg-purple-700 text-white">
+              <Button className="w-full bg-purple-600 hover:bg-purple-700 text-white hover: cursor-pointer">
                 Create Account
               </Button>
               <div className="text-center text-sm text-gray-400">
@@ -102,7 +138,7 @@ export default function RegisterPage() {
             </CardFooter>
           </Card>
         </div>
-      </main>
+      </form>
     </div>
   );
 }

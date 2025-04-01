@@ -10,12 +10,37 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
+import * as Yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { useForm } from "react-hook-form";
+import {
+  InputLabel,
+  InputType,
+  TextInputField,
+} from "@/components/form/input-form.component";
+import { NavLink } from "react-router-dom";
 
 export default function LoginPage() {
+  const loginDTO = Yup.object({
+    email: Yup.string().email().required(),
+    password: Yup.string().required(),
+  });
+
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    resolver: yupResolver(loginDTO),
+  });
+
+  const submitForm = async (data: { email: string; password: string }) => {
+    console.log(data);
+  };
   return (
     <div className="min-h-screen bg-black text-white flex flex-col">
       {/* Main Content */}
-      <main className="flex-grow mt-[4rem]">
+      <form className="flex-grow mt-[4rem]" onSubmit={handleSubmit(submitForm)}>
         <div className="flex items-center justify-center py-16 px-4">
           <Card className="w-full max-w-md bg-gray-900 border-gray-800">
             <CardHeader className="space-y-1">
@@ -28,34 +53,34 @@ export default function LoginPage() {
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="email" className="text-white">
-                  Email
-                </Label>
-                <Input
-                  id="email"
-                  type="email"
+                <div className="flex items-center justify-between">
+                  <InputLabel htmlFor="email">Email</InputLabel>
+                </div>
+                <TextInputField
+                  name="email"
+                  type={InputType.TEXT}
                   placeholder="your.email@example.com"
-                  className="bg-gray-800 border-gray-700 text-white"
-                />
+                  control={control}
+                  errMsg={errors?.email?.message as string}
+                ></TextInputField>
               </div>
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <Label htmlFor="password" className="text-white">
-                    Password
-                  </Label>
-                  <a
-                    href="/forgot-password"
+                  <InputLabel htmlFor="password">Password</InputLabel>
+                  <NavLink
+                    to="/forgot-password"
                     className="text-sm text-purple-400 hover:text-purple-300"
                   >
                     Forgot password?
-                  </a>
+                  </NavLink>
                 </div>
-                <Input
-                  id="password"
-                  type="password"
+                <TextInputField
+                  name="password"
+                  type={InputType.PASSWORD}
                   placeholder="••••••••"
-                  className="bg-gray-800 border-gray-700 text-white"
-                />
+                  control={control}
+                  errMsg={errors?.password?.message as string}
+                ></TextInputField>
               </div>
               <div className="flex items-center space-x-2">
                 <Checkbox id="remember" />
@@ -70,17 +95,17 @@ export default function LoginPage() {
               </Button>
               <div className="text-center text-sm text-gray-400">
                 Don't have an account?{" "}
-                <a
-                  href="/register"
+                <NavLink
+                  to="/register"
                   className="text-purple-400 hover:text-purple-300"
                 >
                   Sign up
-                </a>
+                </NavLink>
               </div>
             </CardFooter>
           </Card>
         </div>
-      </main>
+      </form>
     </div>
   );
 }

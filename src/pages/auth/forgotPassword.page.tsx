@@ -10,12 +10,35 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { ArrowLeft } from "lucide-react";
+import * as Yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { useForm } from "react-hook-form";
+import {
+  InputLabel,
+  InputType,
+  TextInputField,
+} from "@/components/form/input-form.component";
 
 export default function ForgotPasswordPage() {
+  const forgotPasswordDTO = Yup.object({
+    email: Yup.string().email().required(),
+  });
+
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    resolver: yupResolver(forgotPasswordDTO),
+  });
+
+  const submitForm = async (data: { email: string }) => {
+    console.log(data);
+  };
   return (
     <div className="min-h-screen mt-[6rem] bg-black text-white flex flex-col">
       {/* Main Content */}
-      <main className="flex-grow">
+      <form className="flex-grow" onSubmit={handleSubmit(submitForm)}>
         <div className="flex items-center justify-center py-16 px-4">
           <Card className="w-full max-w-md bg-gray-900 border-gray-800">
             <CardHeader className="space-y-1">
@@ -29,15 +52,16 @@ export default function ForgotPasswordPage() {
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="email" className="text-white">
-                  Email
-                </Label>
-                <Input
-                  id="email"
-                  type="email"
+                <div className="flex items-center justify-between">
+                  <InputLabel htmlFor="email">Email</InputLabel>
+                </div>
+                <TextInputField
+                  name="email"
+                  type={InputType.EMAIL}
                   placeholder="your.email@example.com"
-                  className="bg-gray-800 border-gray-700 text-white"
-                />
+                  control={control}
+                  errMsg={errors?.email?.message as string}
+                ></TextInputField>
               </div>
             </CardContent>
             <CardFooter className="flex flex-col space-y-4">
@@ -57,7 +81,7 @@ export default function ForgotPasswordPage() {
             </CardFooter>
           </Card>
         </div>
-      </main>
+      </form>
     </div>
   );
 }
