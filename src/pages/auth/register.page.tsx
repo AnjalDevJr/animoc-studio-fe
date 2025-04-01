@@ -40,7 +40,9 @@ export default function RegisterPage() {
     resolver: yupResolver(registerDTO),
   });
 
-  const submitForm = async (data: any) => {};
+  const submitForm = async (data: any) => {
+    console.log(data);
+  };
   return (
     <div className="min-h-screen bg-black text-white flex flex-col">
       {/* form Content */}
