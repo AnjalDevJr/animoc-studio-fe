@@ -1,11 +1,15 @@
 import { ShoppingCart, Search, Heart } from "lucide-react";
 import { Input } from "../ui/input";
 import { NavLink } from "react-router-dom";
+import { useContext } from "react";
+import { AuthContext } from "@/context/auth-context";
 
 const HomeHeader = () => {
+  const auth = useContext(AuthContext) as { loggedInUser: any };
+
   return (
     <div>
-      <header className="border-b border-gray-800 py-4">
+      <header className="border-b border-gray-800 py-4 bg-gray-950">
         <div className="container mx-auto px-4 flex items-center justify-between">
           <NavLink to="/" className="text-2xl font-bold text-white">
             ANIMOC<sup>™</sup> Studio
@@ -32,18 +36,31 @@ const HomeHeader = () => {
             >
               <ShoppingCart className="h-5 w-5" />
             </NavLink>
-            <NavLink
-              to="/login"
-              className="ml-4 bg-transparent border border-purple-600 text-purple-400 hover:bg-purple-900 hover:text-purple-200 h-10 px-4 py-2 inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors"
-            >
-              Sign In
-            </NavLink>
-            <NavLink
-              to="/register"
-              className="bg-purple-600 text-white hover:bg-purple-700 h-10 px-4 py-2 inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors"
-            >
-              Sign Up
-            </NavLink>
+            {auth && auth.loggedInUser ? (
+              <>
+                <NavLink
+                  to={"/" + auth.loggedInUser.role}
+                  className="bg-purple-600 text-white hover:bg-purple-700 h-10 px-4 py-2 inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors"
+                >
+                  {auth.loggedInUser.name}
+                </NavLink>
+              </>
+            ) : (
+              <>
+                <NavLink
+                  to="/login"
+                  className="ml-4 bg-transparent border border-purple-600 text-purple-400 hover:bg-purple-900 hover:text-purple-200 h-10 px-4 py-2 inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors"
+                >
+                  Sign In
+                </NavLink>
+                <NavLink
+                  to="/register"
+                  className="bg-purple-600 text-white hover:bg-purple-700 h-10 px-4 py-2 inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors"
+                >
+                  Sign Up
+                </NavLink>
+              </>
+            )}
           </div>
         </div>
       </header>
