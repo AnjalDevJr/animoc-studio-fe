@@ -26,4 +26,7 @@ axiosInstance.interceptors.response.use(
   }
 );
 
+export const get = async (url: string, config: any = {}) =>
+  axiosInstance.get(url, config);
+
 export default axiosInstance;
